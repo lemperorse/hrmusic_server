@@ -1,0 +1,14 @@
+asgiref==3.3.4
+Django==3.2.4
+django-admin-sortable2==1.0
+django-cors-headers==3.7.0
+django-filter==2.4.0
+django-rest-auth==0.9.5
+django-rest-registration==0.6.3
+djangorestframework==3.12.4
+drf-generators==0.5.0
+Markdown==3.3.4
+mysqlclient==2.0.3
+pytz==2021.1
+six==1.16.0
+sqlparse==0.4.1
