@@ -35,3 +35,22 @@ class GoalSerializer(ModelSerializer):
     class Meta:
         model = Goal
         fields = '__all__'
+class ProgramViewSerializer(ModelSerializer):
+
+    class Meta:
+        model = Program
+        fields = '__all__'
+
+
+
+class PlanViewSerializer(ModelSerializer):
+    program = ProgramViewSerializer(many=True)
+    class Meta:
+        model = Plan
+        fields = '__all__'
+
+class GoalViewSerializer(ModelSerializer):
+    plan = PlanViewSerializer(read_only=True)
+    class Meta:
+        model = Goal
+        fields = '__all__'

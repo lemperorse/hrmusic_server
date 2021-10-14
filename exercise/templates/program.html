@@ -1,0 +1,154 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+
+    {{ block.super }}
+
+{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+ <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-apexcharts@1.6.0/dist/vue-apexcharts.min.js"></script>
+  {{inline_admin_formset.opts.template  }}
+  <div id="program_vue">
+    <div v-if="response">
+
+        <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
+
+{#            <pre>[[rawData]]</pre>#}
+
+    </div>
+  </div>
+<br><br><br><br>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"  ></script>
+  <script>
+
+      Vue.use(VueApexCharts)
+    Vue.component('apexchart', VueApexCharts)
+   new Vue({
+      el: '#program_vue',
+      delimiters: ['[[', ']]'],
+
+      data:()=>{ return ({
+          id :  {% if original is not None %} {{ original.id }} {% else %} {{ 'null' }} {% endif %} ,
+          rawData:{},
+          series: [],
+          chartOptions: {
+            chart: {
+              height: 350,
+              type: 'line',
+              zoom: {
+                enabled: false
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              curve: 'straight'
+            },
+            title: {
+              {#text: 'Product Trends by Month',#}
+              align: 'left'
+            },
+            grid: {
+              row: {
+                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                opacity: 0.5
+              },
+            },
+            xaxis: {
+              //categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            },
+              yaxis:{
+                  type: 'category',
+                  categories: [1,2,3,4],  // set tickAmount to split x-axis
+                    labels: {
+                      show: true,
+                        formatter: (value) => { return `Zone ${value}` },// just formats date to hh:mm format
+                    },
+              }
+          },
+          response:false,
+      })},
+      methods:{
+          async getData(){
+              this.rawData = await this.get(`/api/exercise/duration/?program={{ original.id }}`)
+              if(this.rawData.length > 0 && this.id){
+                  await this.generateChars();
+                   this.response = true
+              }
+          },
+          async generateChars(){
+              let data = []
+              let reps = []
+              let time = []
+              let allTime = 0
+               data.push(0)
+                  time.push(`0 min`)
+              for (var i=0; i < this.rawData.length; i++){
+
+                  for(var j=0; j < this.rawData[i].reps; j++) {
+                      data.push(this.rawData[i].place)
+                      data.push(this.rawData[i].rest)
+                      let inTime = this.getMin(this.rawData[i].duration, this.rawData[i].rest_duration)
+
+                      let duration = this.getTmeToInt(this.rawData[i].duration)
+                      let rest_duration = this.getTmeToInt(this.rawData[i].rest_duration)
+
+
+                      allTime += duration
+                      time.push(`${allTime} min`)
+                      allTime += rest_duration
+                      time.push(`${allTime} min`)
+                  }
+
+              }
+
+
+
+              this.series.push({
+                  name:"duration",
+                  data : data
+              })
+
+              console.log(data)
+              this.chartOptions.xaxis.categories = time
+
+          },
+
+          getTmeToInt(min){
+              let data = new Date(`2020-07-10 `+min);
+              return data.getMinutes();
+          },
+          getMin(minStart,minEnd){
+              let dateOne = new Date(`2020-07-10 `+minStart);
+              let dateTwo = new Date(`2020-07-10 `+minEnd);
+              let msDifference =  dateTwo - dateOne;
+              let minutes = Math.floor(msDifference/1000/60);
+              return minutes
+          },
+
+          async get(url) {
+            let data = await axios.get(url).then((r) => { return r.data }).catch((e) => { return e.response })
+              data = _.sortBy(data,'no')
+            return data
+          },
+      },
+      async created(){
+        await this.getData()
+
+      }
+    })
+  </script>
+
+{{ block.super }}
+{% endblock %}
