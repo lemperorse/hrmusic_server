@@ -14,9 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from revproxy.views import ProxyView
 
 urlpatterns = [
     path('api/account/', include('account.urls')),
@@ -24,6 +26,7 @@ path('api/exercise/', include('exercise.urls')),
     path('auth/', include('rest_auth.urls')),
     path('auth-reg/', include('rest_registration.api.urls')),
     path('admin/', admin.site.urls),
+    url(r'^(?P<path>.*)$', ProxyView.as_view(upstream='https://pongvarid.github.io/hrmusic_site/')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

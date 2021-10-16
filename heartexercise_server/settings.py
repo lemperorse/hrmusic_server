@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'drf_generators',
     'adminsortable2',
     'account',
+'revproxy',
     'exercise',
 'sortedm2m_filter_horizontal_widget'
 ]
