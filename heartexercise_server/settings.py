@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'admin_interface',
+'dal',
+'dal_select2',
     'django.contrib.admin',
     'colorfield',
     'django.contrib.auth',
@@ -43,15 +45,15 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'rest_registration',
-'corsheaders',
+    'corsheaders',
     'django_filters',
     'markdown',
     'drf_generators',
     'adminsortable2',
     'account',
-'revproxy',
+    'revproxy',
     'exercise',
-'sortedm2m_filter_horizontal_widget'
+    'sortedm2m_filter_horizontal_widget'
 ]
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 SILENCED_SYSTEM_CHECKS = ['security.W019']

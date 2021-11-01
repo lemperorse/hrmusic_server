@@ -1,0 +1,27 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+
+    {{ block.super }}
+
+{% endblock %}
+
+{% block content %}
+ {{inline_admin_formset.opts.template  }}
+     {% if original is not None %} {{ original.program }} {% else %} {{ 'null' }} {% endif %}
+{{ block.super }}
+    <button onclick="test()">sdsds</button>
+    <script>
+    function test(){
+         let cc =  $('#id_program_to > option').length
+         console.log( cc);
+    }
+
+
+
+
+    </script>
+
+
+{% endblock %}

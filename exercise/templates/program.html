@@ -16,9 +16,10 @@
   <div id="program_vue">
     <div v-if="response">
 
+
         <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
 
-{#            <pre>[[rawData]]</pre>#}
+{#            <pre>[[series]]</pre>#}
 
     </div>
   </div>
@@ -53,7 +54,7 @@
               enabled: false
             },
             stroke: {
-              curve: 'straight'
+              curve: 'stepline'
             },
             title: {
               {#text: 'Product Trends by Month',#}
@@ -68,12 +69,16 @@
             xaxis: {
               //categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
             },
+                title: {
+              text: 'Zone',
+              align: 'left'
+            },
               yaxis:{
-                  type: 'category',
-                  categories: [1,2,3,4],  // set tickAmount to split x-axis
+min: 1,
+      max: 4,
                     labels: {
-                      show: true,
-                        formatter: (value) => { return `Zone ${value}` },// just formats date to hh:mm format
+
+                        formatter: (value) => { return `${(value).toFixed(0)}` },// just formats date to hh:mm format
                     },
               }
           },
@@ -92,8 +97,7 @@
               let reps = []
               let time = []
               let allTime = 0
-               data.push(0)
-                  time.push(`0 min`)
+
               for (var i=0; i < this.rawData.length; i++){
 
                   for(var j=0; j < this.rawData[i].reps; j++) {

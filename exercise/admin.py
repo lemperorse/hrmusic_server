@@ -1,5 +1,8 @@
 from django.contrib import admin
-from exercise.models import Program, Plan, HeartSong, Goal, Duration
+from django.utils.safestring import mark_safe
+from dal import autocomplete
+
+from exercise.models import Program, Plan, HeartSong, Goal, Duration, InPlan
 from adminsortable2.admin import SortableAdminMixin,SortableInlineAdminMixin
 from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 
@@ -20,16 +23,39 @@ class ProgramAdmin(admin.ModelAdmin):
 
 admin.site.register(Program,ProgramAdmin)
 
-class PlanAdmin(admin.ModelAdmin):
-    list_display = ['name', 'coach_name', 'number_day', ]
-    search_fields = ['name', 'coach_name', ]
-    filter_horizontal = ('program',)
-    list_filter = ['program', ]
+admin.site.register(InPlan)
 
-    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        if db_field.name == 'program':
-            kwargs['widget'] = SortedFilteredSelectMultiple()
-        return super(PlanAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+
+
+from dal import autocomplete
+
+from django import forms
+
+
+class PersonForm(forms.ModelForm):
+    class Meta:
+        model = InPlan
+        fields = ('__all__')
+        widgets = {
+            'program': autocomplete.ModelSelect2( )
+        }
+
+class InPlanInline(SortableInlineAdminMixin,admin.TabularInline):
+    model = InPlan
+    form = PersonForm
+    list_display = ['no','program']
+class PlanAdmin(admin.ModelAdmin):
+    inlines = (InPlanInline,)
+    # change_form_template = 'plan.html'
+    list_display = ['name', 'coach_name', ]
+    search_fields = ['name', 'coach_name', ]
+    # filter_horizontal = ('program',)
+    # list_filter = ['program', ]
+
+    # def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+    #     if db_field.name == 'program':
+    #         kwargs['widget'] = SortedFilteredSelectMultiple()
+    #     return super(PlanAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
 
 admin.site.register(Plan,PlanAdmin)

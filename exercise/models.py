@@ -1,6 +1,8 @@
 from django.db import models
 
 from account.models import UserProfile
+from sortedm2m.fields import SortedManyToManyField
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
 ZONE = [(1,'Zone 1'),(2,'Zone 2'),(3,'Zone 3'),(4,'Zone 4')]
 DIFFICULTY = [(1,'Easy'),(2,'Moderate'),(3,'Hard')]
@@ -71,19 +73,27 @@ class Plan(models.Model):
     name = models.CharField(max_length=255)
     coach_name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    number_day = models.IntegerField(default=1)
-    day_traning_program = models.DateField(blank=True,null=True)
-    program = models.ManyToManyField(Program)
+    # number_day = models.IntegerField(default=1)
+    # program = SortedManyToManyField(Program)
+    # sort_value = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '{}'.format(self.name)
 
-    @property
-    def count_program(self):
-        return '{}'.format(self.program)
+    # @property
+    # def count_program(self):
+    #     return '{}'.format(self.program)
 
+class InPlan(models.Model):
+    no = models.PositiveIntegerField(default=0)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
+    class Meta(object):
+        ordering = ['no']
+    def __str__(self):
+        return '{}'.format(self.program.name)
 
 class Goal(models.Model):
     user = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
