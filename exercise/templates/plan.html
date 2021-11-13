@@ -9,17 +9,51 @@
 
 {% block content %}
  {{inline_admin_formset.opts.template  }}
-     {% if original is not None %} {{ original.program }} {% else %} {{ 'null' }} {% endif %}
+
 {{ block.super }}
-    <button onclick="test()">sdsds</button>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <script>
-    function test(){
-         let cc =  $('#id_program_to > option').length
-         console.log( cc);
+
+    $(document).ready(function(){
+
+            defaultUser();
+            addCoachCheck();
+
+
+
+
+
+    });
+
+
+    function defaultUser(){
+        let user = $('#id_user').val() ;
+
+        if(user == {{ request.user.id  }} || !user){
+             $('#id_user').val({{ request.user.id }})
+            var newInput = $(" <input name='user' type='hidden' value='{{ request.user.id }}' >");
+            $('#id_user').after(newInput);
+        }
+        $('#id_user').prop( "disabled", true );
     }
 
+    function addCoachCheck(){
+        var newInput = $("  <br>   <input id='coach_x'  onchange='setCoach()' type='checkbox'   >  <span style='margin-left:4px;'>Same Creator </span>   ");
+        $('#id_coach_name').after(newInput);
+    }
 
+    function setCoach(){
+        if($('#coach_x').is(":checked")){
+             $('#id_coach_name').val("{{request.user.first_name }}  {{request.user.last_name }}")
+        }else{
+            $('#id_coach_name').val("")
+        }
 
+    }
 
     </script>
 

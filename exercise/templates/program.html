@@ -25,6 +25,36 @@
   </div>
 <br><br><br><br>
 
+    <style>
+        .datetimeshortcuts{
+                display:none;
+        }
+        .timezonewarning{
+                 display:none;
+        }
+
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+     <script>
+
+    $(document).ready(function(){
+            defaultUser();
+            $('.timezonewarning').text('aaaaaaaaaaaaaa');
+    });
+     function defaultUser(){
+        let user = $('#id_user').val() ;
+        if(user == {{ request.user.id  }} || !user){
+             $('#id_user').val({{ request.user.id }})
+            var newInput = $(" <input name='user' type='hidden' value='{{ request.user.id }}' >");
+            $('#id_user').after(newInput);
+        }
+        $('#id_user').prop( "disabled", true );
+    }
+
+
+</script>
 
 
   <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>

@@ -22,7 +22,7 @@ from revproxy.views import ProxyView
 
 urlpatterns = [
     path('api/account/', include('account.urls')),
-path('api/exercise/', include('exercise.urls')),
+    path('api/exercise/', include('exercise.urls')),
     path('auth/', include('rest_auth.urls')),
     path('auth-reg/', include('rest_registration.api.urls')),
     path('admin/', admin.site.urls),

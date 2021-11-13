@@ -13,4 +13,7 @@ router.register(r'planall', views.PlanAllViewSet)
 router.register(r'goal', views.GoalViewSet)
 router.register(r'goalall', views.GoalAllViewSet)
 
+router.register(r'run/main', views.RunMainViewSet)
+router.register(r'run/result', views.RunResultViewSet)
+
 urlpatterns = router.urls
