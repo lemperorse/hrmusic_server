@@ -28,6 +28,7 @@ class DurationForm(forms.ModelForm):
         #     'body': forms.Textarea(attrs={'cols': 80, 'rows': 20})
         # }
     pass
+
 class DurationInline(SortableInlineAdminMixin,admin.TabularInline):
     model = Duration
     list_display = ['no','place']
@@ -126,18 +127,6 @@ class PlanAdmin(admin.ModelAdmin):
             return redirect("{url}?{get_parms}".format(url=request.path, get_parms=get_param))
         return super(PlanAdmin, self).changelist_view(request, extra_context=extra_context)
 
-    # def get_changeform_initial_data(self, request):
-    #     return {'user': request.user}
-
-
-    # filter_horizontal = ('program',)
-    # list_filter = ['program', ]
-
-    # def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-    #     if db_field.name == 'program':
-    #         kwargs['widget'] = SortedFilteredSelectMultiple()
-    #     return super(PlanAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
-
 
 admin.site.register(Plan,PlanAdmin)
 
@@ -160,12 +149,20 @@ class GoalAdmin(admin.ModelAdmin):
 
 admin.site.register(Goal,GoalAdmin)
 
-# class DurationAdmin(admin.ModelAdmin):
-#     list_display = ['no','place','duration','rest','rest_duration','reps','program_name','program_name','level']
-#     list_filter = ['program','program__difficulty',]
-#     search_fields = ['no', 'place','program__name']
-# admin.site.register(Duration,DurationAdmin)
 
 
-admin.site.register(RunMain)
-admin.site.register(RunResult)
+
+class RunResultInline(admin.TabularInline):
+    model = RunResult
+    list_display = ['hr_bpm','hr_zone','music_bpm','music_zone','music']
+
+
+class RunMainAdmin(admin.ModelAdmin):
+    inlines = (RunResultInline,)
+    change_form_template = 'runmain.html'
+    list_display = ['user', 'goal', 'plan', 'program']
+    list_filter = ['plan', 'program', 'created_at']
+    search_fields = ['user__username', 'user__first_name', 'user__last_name', 'plan__name', 'program__name']
+
+admin.site.register(RunMain,RunMainAdmin)
+# admin.site.register(RunResult)

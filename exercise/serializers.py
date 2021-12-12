@@ -8,19 +8,27 @@ class HeartSongSerializer(ModelSerializer):
         model = HeartSong
         fields = '__all__'
 
-
-class ProgramSerializer(ModelSerializer):
-
-    class Meta:
-        model = Program
-        fields = '__all__'
-
-
 class DurationSerializer(ModelSerializer):
 
     class Meta:
         model = Duration
         fields = '__all__'
+
+class ProgramSerializer(ModelSerializer):
+    durations = SerializerMethodField()
+    class Meta:
+        model = Program
+        fields = '__all__'
+    def get_durations(self,obj):
+        try:
+            durations = Duration.objects.filter(program=obj.id).order_by('no')
+            durations = DurationSerializer(durations,many=True)
+            return durations.data
+        except:
+            return None
+
+
+
 
 
 class PlanSerializer(ModelSerializer):
@@ -71,16 +79,22 @@ class GoalViewSerializer(ModelSerializer):
         model = Goal
         fields = '__all__'
 
-
-
-class RunMainSerializer(ModelSerializer):
-
-    class Meta:
-        model = RunMain
-        fields = '__all__'
-
 class RunResultSerializer(ModelSerializer):
-
     class Meta:
         model = RunResult
         fields = '__all__'
+
+class RunMainSerializer(ModelSerializer):
+    result = SerializerMethodField(read_only=True)
+    class Meta:
+        model = RunMain
+        fields = '__all__'
+    def get_result(self, obj):
+        try:
+            data = RunResult.objects.filter(run_main=obj.id).order_by('id')
+            data = RunResultSerializer(data, many=True)
+            return data.data
+        except:
+            return None
+
+

@@ -1,0 +1,189 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+
+    {{ block.super }}
+
+{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+ <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-apexcharts@1.6.0/dist/vue-apexcharts.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  {{inline_admin_formset.opts.template  }}
+  <div id="program_vue" >
+    <div id="chart" v-if="response">
+        <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
+      </div>
+
+  </div>
+<br><br><br><br>
+
+    <style>
+        .datetimeshortcuts{
+                display:none;
+        }
+        .timezonewarning{
+                 display:none;
+        }
+
+    </style>
+
+ 
+
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+  <script>
+
+      Vue.use(VueApexCharts)
+    Vue.component('apexchart', VueApexCharts)
+   new Vue({
+      el: '#program_vue',
+      delimiters: ['[[', ']]'],
+      vuetify: new Vuetify(),
+      data:()=>{ return ({
+          id :  {% if original is not None %} {{ original.id }} {% else %} {{ 'null' }} {% endif %} ,
+          dad:{},
+            series:[],
+       chartOptions: {
+            chart: {
+              height: 350,
+              type: 'line'
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              curve: 'smooth'
+            },
+            xaxis: {
+                 type: 'category',
+              categories: []
+            },
+            tooltip: {
+              x: {
+                format: 'dd/MM/yy HH:mm'
+              },
+            },
+           annotations: {
+                    position: "front",
+                    yaxis: [{
+                            label: {
+                                text: "Zone 1",
+                                borderColor: '#00E396',
+                                style: {
+                                    fontSize: '14px',
+                                    color: '#fff',
+                                    background: '#00E396',
+                                },
+                            },
+                            y: 90,
+                            y2: 108,
+                            fillColor: "rgba(71, 255, 47, 0.5)"
+                        },
+                        {
+                            label: {
+                                text: "Zone 2 ",
+                                borderColor: '#ffff00',
+                                style: {
+                                    fontSize: '14px',
+                                    color: '#400000',
+                                    background: '#ffff00',
+                                },
+                            },
+                            y: 108.1,
+                            y2: 126,
+                            fillColor: "rgba(249, 255, 47, 0.8)"
+                        },
+                        {
+                            label: {
+                                text: "Zone 3 ",
+                                borderColor: '#ff8040',
+                                 offsetY: 20,
+                                style: {
+                                    fontSize: '14px',
+                                    color: '#fff',
+                                    background: '#ff8040',
+                                },
+                            },
+                            y: 126.1,
+                            y2: 144,
+                            fillColor: "rgba(300,120, 12, 0.8)",
+                        },
+                        {
+                            label: {
+                                text: "Zone 4 ",
+                                borderColor: '#ff3c3c',
+                                     offsetY: 50,
+                                style: {
+                                    fontSize: '14px',
+                                    color: '#fff',
+                                    background: '#ff3c3c',
+
+                                },
+                            },
+                            y: 144.1,
+                            y2: 162,
+                            fillColor: 'rgba(207, 0, 0, 0.5)',
+                        }
+                    ]
+                }
+          },
+          response:false
+      })},
+      methods:{
+           async getData(){
+               let data = await this.get(`/api/exercise/run/main/${this.id}/`)
+               if(data){
+                 let hr = await _.map(data.result,(r)=>{return Number(r.hr_bpm)});
+                 let music = await _.map(data.result,(r)=>{return Number(r.music_bpm)});
+                 this.series = [
+                     {  name: 'HR.',
+                        data: hr,
+                     },
+                      {  name: 'Music',
+                        data: music,
+                     } ]
+                 console.log(hr,music)
+                    let cat = 0;
+
+                   {#time.utcOffset(0);#}
+                   {#time.set({hour:0,minute:0,second:0,millisecond:0});#}
+                let category = []
+               for (let i=0; i< hr.length ; i++){
+
+                   let time = moment().utcOffset(0).set({hour:0,minute:0,second:0,millisecond:0}).add(cat, 'minutes').format('HH:mm:ss') //.format('dd-MM-YYYY HH:mm:ss');
+
+                   category.push(time.toString())
+
+                   cat+=2
+               }
+               this.chartOptions.xaxis.categories = category
+               console.log(category)
+               }
+
+               this.dad = data
+               this.response = true
+           },
+           async get(url) {
+            let data = await axios.get(url).then((r) => { return r.data }).catch((e) => { return e.response })
+            return data
+          },
+      },
+      async created(){
+       await this.getData()
+
+
+      }
+    })
+  </script>
+{{ block.super }}
+
+{% endblock %}
