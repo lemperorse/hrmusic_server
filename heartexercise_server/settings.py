@@ -81,11 +81,22 @@ REST_FRAMEWORK = {
 
 ROOT_URLCONF = 'heartexercise_server.urls'
 AUTH_USER_MODEL = 'account.UserProfile'
+REGISTER_EMAIL_SERIALIZER_CLASS = 'rest_registration.api.serializers.DefaultRegisterEmailSerializer'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'pongv.dev.le@gmail.com'
+EMAIL_HOST_PASSWORD = '0988203979'
 REST_REGISTRATION = {
     'REGISTER_VERIFICATION_ENABLED': False,
-    'RESET_PASSWORD_VERIFICATION_ENABLED': False,
+    'RESET_PASSWORD_VERIFICATION_ENABLED': True,
     'REGISTER_EMAIL_VERIFICATION_ENABLED': False,
+    'VERIFICATION_FROM_EMAIL': 'pongvarid@gmail.com',
+    'RESET_PASSWORD_VERIFICATION_URL': 'https://frontend-host/reset-password/',
 }
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
