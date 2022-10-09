@@ -6,7 +6,7 @@ from dal import autocomplete
 
 from exercise.models import Program, Plan, HeartSong, Goal, Duration, InPlan, RunMain, RunResult
 from adminsortable2.admin import SortableAdminMixin,SortableInlineAdminMixin
-from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
+# from sortedm2m_filter_horizontal_widget.forms import SortedFilteredSelectMultiple
 from dal import autocomplete
 
 from django import forms

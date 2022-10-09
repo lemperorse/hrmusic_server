@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'account',
     'revproxy',
     'exercise',
-    'sortedm2m_filter_horizontal_widget'
+    # 'sortedm2m_filter_horizontal_widget'
 ]
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 SILENCED_SYSTEM_CHECKS = ['security.W019']
